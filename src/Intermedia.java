@@ -168,13 +168,17 @@ public class Intermedia {
 
 			ArrayList<ArrayList<Ficha>> juego = transformar(matriz);
 
-			ArrayList<Ficha> puntuacion = new ArrayList<>();
+			ArrayList<ArrayList<Ficha>> mejoresSolucionesFinales = new ArrayList<>();
 			ArrayList<Ficha> parcial = new ArrayList<>();
 
-			jugarFichas(juego, 1, 0, parcial, puntuacion);
+			jugarFichas(juego, 1, 0, parcial, mejoresSolucionesFinales);
 			System.out.println("Juego "+(aux+1)+":");
-			for (int i = 0; i < puntuacion.size(); i++) {
-				System.out.println(puntuacion.get(i).getMovimiento());
+			for (int i = 0; i < mejoresSolucionesFinales.size(); i++) {
+                System.out.println("Solución "+ (i+1)+ " de " + mejoresSolucionesFinales.size() +":");
+                for(int k = 0; k<mejoresSolucionesFinales.get(i).size(); k++){
+                    System.out.println(mejoresSolucionesFinales.get(i).get(k).toString());
+                }
+				//System.out.println(mejoresSolucionesFinales.get(0).get(i).getMovimiento());
 			}
 			aux++;
 			if (aux != matrices.size()) {
@@ -184,7 +188,7 @@ public class Intermedia {
 	}
 
 	public static int jugarFichas(ArrayList<ArrayList<Ficha>> juego, int m, int pts, ArrayList<Ficha> parcial,
-			ArrayList<Ficha> solucionFinal) {
+			ArrayList<ArrayList<Ficha>> mejoresSolucionesFinales) {
 		ArrayList<Ficha> equipos = null;
 		ArrayList<ArrayList<Ficha>> copia = clonar(juego);
 		equipos = getEquipos(copia);
@@ -206,9 +210,9 @@ public class Intermedia {
 				puntosT += 1000;
 				Ficha jFinal = new Ficha(puntosT, numFichas);
 				aux.add(jFinal);
-				cambiaSolucion(solucionFinal, aux);
+				cambiaSolucion(mejoresSolucionesFinales, aux);
 			} else {
-				jugarFichas(copia2, m + 1, puntosT, aux, solucionFinal);
+				jugarFichas(copia2, m + 1, puntosT, aux, mejoresSolucionesFinales);
 			}
 		}
 		if (equipos.size() == 0) {
@@ -222,44 +226,46 @@ public class Intermedia {
 			ArrayList<Ficha> aux = new ArrayList<>();
 			aux.addAll(parcial);
 			aux.add(jFinal);
-			cambiaSolucion(solucionFinal, aux);
+			cambiaSolucion(mejoresSolucionesFinales, aux);
 
 		}
 		return 0;
 
 	}
 
-	private static void cambiaSolucion(ArrayList<Ficha> solucionFinal, ArrayList<Ficha> aux) {
+	private static void cambiaSolucion(ArrayList<ArrayList<Ficha>> mejoresSolucionesFinales, ArrayList<Ficha> aux) {
 		// TODO Auto-generated method stub
-		if (solucionFinal.isEmpty()) {
-			solucionFinal.addAll(aux);
+		if (mejoresSolucionesFinales.isEmpty()) {
+			mejoresSolucionesFinales.add(aux);
 			return;
 		}
-		int puntosSolucionFinal = solucionFinal.get(solucionFinal.size() - 1).getPuntos();
+		int puntosSolucionFinal = mejoresSolucionesFinales.get(0).get(mejoresSolucionesFinales.get(0).size() - 1).getPuntos();
 		int puntosAux = aux.get(aux.size() - 1).getPuntos();
 		if (puntosSolucionFinal < puntosAux) {
-			solucionFinal.clear();
-			solucionFinal.addAll(aux);
+			mejoresSolucionesFinales.clear();
+			mejoresSolucionesFinales.add(aux);
 		} else if (puntosAux == puntosSolucionFinal) {
-			for (int i = 0; i < solucionFinal.size() && i < aux.size(); i++) {
-				int filaSolucion = solucionFinal.get(i).getFila();
-				int columnaSolucion = solucionFinal.get(i).getColumna();
+            mejoresSolucionesFinales.add(aux);
+
+			/*for (int i = 0; i < mejoresSolucionesFinales.size() && i < aux.size(); i++) {
+				int filaSolucion = mejoresSolucionesFinales.get(i).getFila();
+				int columnaSolucion = mejoresSolucionesFinales.get(i).getColumna();
 				int filaAux = aux.get(i).getFila();
 				int columnaAux = aux.get(i).getColumna();
 				if (filaSolucion < filaAux) {
-					solucionFinal.clear();
-					solucionFinal.addAll(aux);
+					mejoresSolucionesFinales.clear();
+					mejoresSolucionesFinales.add(aux);
 				} else if (filaSolucion == filaAux) {
 					if (columnaAux < columnaSolucion) {
-						solucionFinal.clear();
-						solucionFinal.addAll(aux);
+						mejoresSolucionesFinales.clear();
+						mejoresSolucionesFinales.add(aux);
 					} else if (columnaAux > columnaSolucion) {
 						return;
 					}
 				} else {
 					return;
 				}
-			}
+			}*/
 		}
 
 	}
